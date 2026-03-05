@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Documentation — CyberShield AI{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">📚 Documentation</h2>
+
+<div class="row g-4">
+  <!-- ── Description ────────────────────────────────────────────────── -->
+  <div class="col-12">
+    <div class="cyber-card p-4">
+      <h5 class="text-cyan"><i class="bi bi-info-circle"></i> Présentation du projet</h5>
+      <p>
+        <strong>CyberShield AI</strong> est un système de détection et de résolution automatique de
+        cyberattaques basé sur l'Intelligence Artificielle (<em>Random Forest</em>), développé avec
+        Flask (Python). Il analyse les métriques réseau en temps réel pour identifier six types
+        de menaces et proposer des actions de remédiation adaptées.
+      </p>
+      <hr class="border-secondary" />
+      <p>
+        <strong>CyberShield AI</strong> is an AI-powered cybersecurity system built with Flask and
+        scikit-learn. It uses a Random Forest classifier trained on simulated network connection data
+        to detect six types of cyber threats and automatically recommend remediation actions.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Attack types ───────────────────────────────────────────────── -->
+  <div class="col-lg-6">
+    <div class="cyber-card p-4 h-100">
+      <h5 class="text-cyan"><i class="bi bi-bug"></i> Types d'attaques détectées</h5>
+      <table class="table table-dark table-sm table-hover">
+        <thead>
+          <tr><th>Type</th><th>Badge</th><th>Criticité</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Normal</td><td><span class="badge attack-badge-success">Normal</span></td><td><span class="badge bg-success">NORMAL</span></td></tr>
+          <tr><td>DDoS</td><td><span class="badge attack-badge-danger">DDoS</span></td><td><span class="badge bg-danger">CRITIQUE</span></td></tr>
+          <tr><td>Intrusion</td><td><span class="badge attack-badge-warning">Intrusion</span></td><td><span class="badge bg-orange">MOYEN</span></td></tr>
+          <tr><td>Malware</td><td><span class="badge attack-badge-purple">Malware</span></td><td><span class="badge bg-danger">CRITIQUE</span></td></tr>
+          <tr><td>Phishing</td><td><span class="badge attack-badge-phishing">Phishing</span></td><td><span class="badge bg-warning text-dark">FAIBLE</span></td></tr>
+          <tr><td>SQL Injection</td><td><span class="badge attack-badge-primary">SQL_Injection</span></td><td><span class="badge bg-orange">MOYEN</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Algorithm ──────────────────────────────────────────────────── -->
+  <div class="col-lg-6">
+    <div class="cyber-card p-4 h-100">
+      <h5 class="text-cyan"><i class="bi bi-cpu"></i> Algorithme utilisé</h5>
+      <table class="table table-dark table-sm">
+        <tbody>
+          <tr><th>Algorithme</th><td>Random Forest Classifier</td></tr>
+          <tr><th>Arbres</th><td>100 (<code>n_estimators=100</code>)</td></tr>
+          <tr><th>Graine</th><td><code>random_state=42</code></td></tr>
+          <tr><th>Bibliothèque</th><td>scikit-learn 1.3.2</td></tr>
+          <tr><th>Données</th><td>4 150 connexions simulées</td></tr>
+          <tr><th>Split</th><td>80 % entraînement / 20 % test</td></tr>
+        </tbody>
+      </table>
+      <p class="small text-muted mt-2">
+        Le Random Forest est un ensemble d'arbres de décision entraînés sur des sous-ensembles
+        aléatoires des données. Il est robuste au sur-apprentissage et fournit une estimation
+        de confiance via les probabilités moyennées sur tous les arbres.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Features ───────────────────────────────────────────────────── -->
+  <div class="col-lg-6">
+    <div class="cyber-card p-4 h-100">
+      <h5 class="text-cyan"><i class="bi bi-list-check"></i> Variables d'entrée (features)</h5>
+      <ol class="small">
+        <li><strong>duree_connexion</strong> — Durée de la connexion (secondes)</li>
+        <li><strong>nb_connexions_par_sec</strong> — Nombre de connexions par seconde</li>
+        <li><strong>volume_donnees_kb</strong> — Volume de données échangées (KB)</li>
+        <li><strong>nb_erreurs</strong> — Nombre d'erreurs réseau</li>
+        <li><strong>nb_ports_scanes</strong> — Nombre de ports scannés</li>
+        <li><strong>taux_echec_connexion</strong> — Taux d'échec des connexions (0–1)</li>
+        <li><strong>taille_paquets_moy</strong> — Taille moyenne des paquets (bytes)</li>
+        <li><strong>nb_tentatives_auth</strong> — Nombre de tentatives d'authentification</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ── Architecture ───────────────────────────────────────────────── -->
+  <div class="col-lg-6">
+    <div class="cyber-card p-4 h-100">
+      <h5 class="text-cyan"><i class="bi bi-diagram-3"></i> Architecture du système</h5>
+      <pre class="small text-green mb-0">
+CyberShield-AI/
+├── app.py          ← Routes Flask (API + vues)
+├── model.py        ← Modèle Random Forest
+├── requirements.txt
+├── templates/
+│   ├── base.html       ← Navbar / Footer
+│   ├── index.html      ← Dashboard temps réel
+│   ├── analyser.html   ← Formulaire d'analyse
+│   ├── historique.html ← Historique détections
+│   └── documentation.html
+├── static/
+│   ├── css/style.css   ← Thème cybersécurité
+│   └── js/dashboard.js ← Chart.js + simulation
+└── data/
+    └── generate_dataset.py
+      </pre>
+    </div>
+  </div>
+
+  <!-- ── Glossary ───────────────────────────────────────────────────── -->
+  <div class="col-12">
+    <div class="cyber-card p-4">
+      <h5 class="text-cyan"><i class="bi bi-bookmark"></i> Glossaire</h5>
+      <div class="row row-cols-1 row-cols-md-2 g-2 small">
+        <div class="col"><strong>DDoS</strong> — Distributed Denial of Service : saturation d'un service par un flux massif de requêtes.</div>
+        <div class="col"><strong>Intrusion</strong> — Accès non autorisé à un système via exploitation de vulnérabilités.</div>
+        <div class="col"><strong>Malware</strong> — Logiciel malveillant (virus, trojan, ransomware…).</div>
+        <div class="col"><strong>Phishing</strong> — Hameçonnage : tentative de vol d'identifiants par imitation.</div>
+        <div class="col"><strong>SQL Injection</strong> — Injection de code SQL malveillant dans une requête.</div>
+        <div class="col"><strong>Random Forest</strong> — Ensemble d'arbres de décision pour la classification.</div>
+        <div class="col"><strong>WAF</strong> — Web Application Firewall : pare-feu applicatif web.</div>
+        <div class="col"><strong>Rate Limiting</strong> — Limitation du nombre de requêtes par unité de temps.</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

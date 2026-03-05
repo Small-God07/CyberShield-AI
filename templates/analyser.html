@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}Analyser une connexion — CyberShield AI{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">🔍 Analyser une connexion réseau</h2>
+
+<div class="row g-3">
+  <!-- ── Form ─────────────────────────────────────────────────────────── -->
+  <div class="col-lg-6">
+    <div class="cyber-card p-4">
+      <h5 class="text-cyan mb-3"><i class="bi bi-sliders"></i> Paramètres de connexion</h5>
+
+      <!-- Scenario quick buttons -->
+      <div class="mb-3">
+        <small class="text-muted d-block mb-2">Scénarios rapides :</small>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-sm btn-outline-danger" onclick="appliquerScenario('DDoS')">⚡ DDoS</button>
+          <button type="button" class="btn btn-sm btn-outline-warning" onclick="appliquerScenario('Intrusion')">🔓 Intrusion</button>
+          <button type="button" class="btn btn-sm btn-outline-purple" onclick="appliquerScenario('Malware')">🦠 Malware</button>
+          <button type="button" class="btn btn-sm btn-outline-phishing" onclick="appliquerScenario('Phishing')">🎣 Phishing</button>
+          <button type="button" class="btn btn-sm btn-outline-primary" onclick="appliquerScenario('SQL_Injection')">💉 SQL Injection</button>
+          <button type="button" class="btn btn-sm btn-outline-success" onclick="appliquerScenario('Normal')">✅ Normal</button>
+        </div>
+      </div>
+
+      <form method="POST" action="{{ url_for('analyser') }}">
+        {% set fields = [
+          ("duree_connexion",       "Durée connexion (s)",          0.001, 300,  1.0,   0.001),
+          ("nb_connexions_par_sec", "Connexions / seconde",         1,     10000,5,     1),
+          ("volume_donnees_kb",     "Volume données (KB)",          0,     5000, 150,   1),
+          ("nb_erreurs",            "Nombre d'erreurs",             0,     50,   1,     1),
+          ("nb_ports_scanes",       "Ports scannés",                0,     100,  0,     1),
+          ("taux_echec_connexion",  "Taux d'échec connexion (0-1)", 0,     1,    0.05,  0.01),
+          ("taille_paquets_moy",    "Taille paquets moy. (bytes)",  40,    1500, 512,   1),
+          ("nb_tentatives_auth",    "Tentatives d'auth",            0,     50,   1,     1),
+        ] %}
+        {% for name, label, min_v, max_v, default, step in fields %}
+        <div class="mb-3">
+          <label class="form-label small text-muted" for="{{ name }}">{{ label }}</label>
+          <div class="d-flex gap-2 align-items-center">
+            <input type="range" class="form-range flex-grow-1" id="{{ name }}_range"
+              min="{{ min_v }}" max="{{ max_v }}" step="{{ step }}" value="{{ default }}"
+              oninput="document.getElementById('{{ name }}').value=this.value" />
+            <input type="number" class="form-control form-control-sm cyber-input"
+              id="{{ name }}" name="{{ name }}"
+              min="{{ min_v }}" max="{{ max_v }}" step="{{ step }}" value="{{ default }}"
+              style="width:100px;"
+              oninput="document.getElementById('{{ name }}_range').value=this.value" />
+          </div>
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-cyber-primary w-100 mt-2">
+          <i class="bi bi-shield-shaded"></i> Analyser
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Result ────────────────────────────────────────────────────────── -->
+  <div class="col-lg-6">
+    <div class="cyber-card p-4 h-100">
+      <h5 class="text-cyan mb-3"><i class="bi bi-activity"></i> Résultat de l'analyse</h5>
+
+      {% if result %}
+        {% if result.error is defined %}
+          <div class="alert alert-danger">{{ result.error }}</div>
+        {% else %}
+          <!-- Type badge -->
+          <div class="text-center mb-3">
+            <span class="badge attack-badge-{{ result.badge }} fs-5 px-4 py-2">
+              {{ result.type_attaque }}
+            </span>
+          </div>
+
+          <!-- Criticité -->
+          <div class="mb-3 text-center">
+            {% if result.criticite == 'NORMAL' %}
+              <span class="badge bg-success fs-6">🟢 NORMAL</span>
+            {% elif result.criticite == 'FAIBLE' %}
+              <span class="badge bg-warning text-dark fs-6">🟡 FAIBLE</span>
+            {% elif result.criticite == 'MOYEN' %}
+              <span class="badge bg-orange fs-6">🟠 MOYEN</span>
+            {% else %}
+              <span class="badge bg-danger fs-6 critical-pulse">🔴 CRITIQUE</span>
+            {% endif %}
+          </div>
+
+          <!-- Confidence bar -->
+          <div class="mb-3">
+            <small class="text-muted">Confiance du modèle : <strong>{{ result.confiance }}%</strong></small>
+            <div class="progress mt-1" style="height:10px;">
+              <div class="progress-bar
+                {% if result.confiance >= 80 %}bg-success
+                {% elif result.confiance >= 60 %}bg-warning
+                {% else %}bg-danger{% endif %}"
+                style="width:{{ result.confiance }}%">
+              </div>
+            </div>
+          </div>
+
+          <!-- Solutions -->
+          <div>
+            <small class="text-muted d-block mb-2"><i class="bi bi-tools"></i> Actions recommandées :</small>
+            <ul class="list-unstyled">
+              {% for action in result.solution %}
+              <li class="mb-1">
+                <span class="text-cyan">›</span> <small>{{ action }}</small>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="text-center text-muted mt-5">
+          <i class="bi bi-shield fs-1 d-block mb-3 text-cyan"></i>
+          Renseignez les paramètres de connexion et cliquez sur <strong>Analyser</strong>
+          pour obtenir une prédiction de l'IA.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const SCENARIOS = {
+  "Normal":        {duree_connexion:1.2, nb_connexions_par_sec:5,    volume_donnees_kb:150, nb_erreurs:1,  nb_ports_scanes:0,  taux_echec_connexion:0.05, taille_paquets_moy:512,  nb_tentatives_auth:1},
+  "DDoS":          {duree_connexion:0.02,nb_connexions_par_sec:8000, volume_donnees_kb:10,  nb_erreurs:15, nb_ports_scanes:1,  taux_echec_connexion:0.95, taille_paquets_moy:60,   nb_tentatives_auth:0},
+  "Intrusion":     {duree_connexion:30,  nb_connexions_par_sec:2,    volume_donnees_kb:800, nb_erreurs:8,  nb_ports_scanes:50, taux_echec_connexion:0.45, taille_paquets_moy:400,  nb_tentatives_auth:20},
+  "Malware":       {duree_connexion:120, nb_connexions_par_sec:1,    volume_donnees_kb:3000,nb_erreurs:2,  nb_ports_scanes:2,  taux_echec_connexion:0.05, taille_paquets_moy:1200, nb_tentatives_auth:1},
+  "Phishing":      {duree_connexion:3,   nb_connexions_par_sec:4,    volume_donnees_kb:40,  nb_erreurs:1,  nb_ports_scanes:1,  taux_echec_connexion:0.15, taille_paquets_moy:250,  nb_tentatives_auth:5},
+  "SQL_Injection": {duree_connexion:2,   nb_connexions_par_sec:10,   volume_donnees_kb:15,  nb_erreurs:18, nb_ports_scanes:0,  taux_echec_connexion:0.65, taille_paquets_moy:120,  nb_tentatives_auth:35},
+};
+
+function appliquerScenario(type) {
+  const s = SCENARIOS[type];
+  if (!s) return;
+  Object.entries(s).forEach(([key, val]) => {
+    const input = document.getElementById(key);
+    const range = document.getElementById(key + '_range');
+    if (input) input.value = val;
+    if (range) range.value = val;
+  });
+}
+</script>
+{% endblock %}
