@@ -1,0 +1,82 @@
+## 📝 Mise à jour importante — Documents très détaillés et commentés
+
+Le script `docs/generate_docs.py` doit être **extrêmement commenté**. Voici les exigences supplémentaires :
+
+### Pour le script `generate_docs.py` :
+
+Chaque section du code doit avoir des commentaires détaillés expliquant :
+- **Pourquoi** on fait cette chose
+- **Comment** ça fonctionne
+- **Ce que ça produit**
+
+Exemple de niveau de commentaires attendu :
+
+```python
+# =============================================================================
+# SECTION 2.1 — LES CYBERATTAQUES EN DÉTAIL
+# =============================================================================
+# Pourquoi cette section ?
+# Les cyberattaques sont le cœur du sujet. Il est essentiel que le lecteur
+# comprenne chaque type d'attaque avant de voir comment l'IA les détecte.
+# Chaque attaque est décrite avec :
+# - Sa définition technique simple
+# - Un exemple réel connu (pour ancrer dans la réalité)
+# - Les signes détectables (ce que l'IA va apprendre à reconnaître)
+# - La valeur des features associées dans notre dataset
+# =============================================================================
+```
+
+### Pour le PDF — exigences de commentaires dans chaque section :
+
+**Section 3 (Outils)** — Pour chaque outil, expliquer en détail :
+- Pourquoi on a CHOISI cet outil (et pas un autre)
+- Comment il s'intègre dans le projet
+- Un exemple concret de son utilisation dans notre code
+- La commande d'installation exacte
+- Un lien vers la documentation officielle
+
+Exemple pour Flask :
+> "Nous avons choisi Flask plutôt que Django car Flask est un micro-framework : il ne force pas une structure rigide. Pour un projet scolaire où on veut comprendre chaque ligne de code, Flask est idéal car il n'ajoute pas de 'magie' cachée. Django aurait été trop lourd et aurait caché trop de choses au débutant."
+
+**Section 6 (Code)** — Pour CHAQUE bloc de code Python :
+- Commentaire AVANT le bloc : "Ce bloc fait X parce que Y"
+- Commentaire sur chaque ligne complexe
+- Explication du résultat attendu
+- Explication des cas d'erreur possibles
+
+Exemple :
+```python
+# On utilise numpy.random.seed(42) pour fixer le générateur aléatoire.
+# Pourquoi 42 ? C'est une convention dans la communauté data science
+# (référence au roman "Le Guide du voyageur galactique").
+# L'important est que ce nombre fixe le générateur : si tu lances le code
+# 10 fois, tu obtiendras toujours exactement les mêmes données.
+# Sans seed, les données seraient différentes à chaque exécution,
+# ce qui rendrait les résultats non reproductibles.
+np.random.seed(42)
+```
+
+**Section 7 (Random Forest)** — Expliquer avec des analogies :
+- Analogie de la forêt d'arbres = 100 experts qui votent
+- Expliquer le bootstrap sampling (tirage avec remise)
+- Expliquer le feature randomness
+- Montrer un exemple d'arbre de décision simple
+
+### Pour le PowerPoint — notes de présentation sur chaque slide :
+
+Chaque slide doit avoir des **notes de présentateur** détaillées (utiliser `slide.notes_slide`) expliquant :
+- Ce que l'orateur doit dire sur ce slide
+- Les questions probables du jury sur ce sujet
+- La durée suggérée pour ce slide
+
+Exemple pour le slide Random Forest :
+> "Note : Quand vous présentez ce slide, prenez 2 minutes pour l'analogie des 100 experts. Dites : 'Imaginez que vous voulez savoir si une connexion est une attaque. Si vous demandez à 1 seul expert, il peut se tromper. Mais si vous demandez à 100 experts indépendants et que 80 disent DDoS, vous pouvez avoir confiance.' Question probable du jury : 'Pourquoi pas du Deep Learning ?' Réponse : 'Le Random Forest est interprétable — on peut expliquer pourquoi il a pris une décision. Le Deep Learning est une boîte noire.'"
+
+### Résumé des exigences supplémentaires :
+1. ✅ Script `generate_docs.py` avec commentaires sur CHAQUE ligne de code
+2. ✅ PDF avec explications très détaillées de chaque notion et outil
+3. ✅ PowerPoint avec notes de présentateur sur chaque slide
+4. ✅ Pour chaque outil : justification du choix + alternatives rejetées
+5. ✅ Pour chaque bloc de code : explication ligne par ligne dans le PDF
+6. ✅ Analogies simples pour chaque concept technique
+7. ✅ Questions/Réponses probables du jury intégrées dans les notes PPTX
