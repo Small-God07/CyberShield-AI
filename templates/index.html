@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — CyberShield AI{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4">
+  <h2 class="me-3 mb-0">🖥️ Dashboard</h2>
+  <span class="badge bg-success pulse-badge">LIVE</span>
+</div>
+
+<!-- ── Stats cards ────────────────────────────────────────────────────── -->
+<div class="row g-3 mb-4" id="stats-cards">
+  <div class="col-sm-6 col-xl-3">
+    <div class="cyber-card h-100 p-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="text-muted small mb-1">Total détections</div>
+          <div class="fs-2 fw-bold text-cyan" id="stat-total">{{ nb_detections }}</div>
+        </div>
+        <span class="fs-2">📡</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="cyber-card h-100 p-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="text-muted small mb-1">Attaques bloquées</div>
+          <div class="fs-2 fw-bold text-danger" id="stat-attaques">{{ nb_attaques }}</div>
+        </div>
+        <span class="fs-2">🚨</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="cyber-card h-100 p-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="text-muted small mb-1">Précision du modèle</div>
+          <div class="fs-2 fw-bold text-green" id="stat-accuracy">{{ stats.accuracy }}%</div>
+        </div>
+        <span class="fs-2">🤖</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="cyber-card h-100 p-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="text-muted small mb-1">Trafic normal</div>
+          <div class="fs-2 fw-bold text-success" id="stat-normal">{{ comptage.Normal }}</div>
+        </div>
+        <span class="fs-2">✅</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Chart + Recent table ───────────────────────────────────────────── -->
+<div class="row g-3 mb-4">
+  <div class="col-lg-4">
+    <div class="cyber-card p-3 h-100">
+      <h6 class="text-cyan mb-3"><i class="bi bi-pie-chart"></i> Répartition des attaques</h6>
+      <div class="d-flex justify-content-center">
+        <canvas id="attackChart" style="max-width:260px;max-height:260px;"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="cyber-card p-3 h-100">
+      <h6 class="text-cyan mb-3"><i class="bi bi-list-ul"></i> 10 dernières détections</h6>
+      <div class="table-responsive">
+        <table class="table table-dark table-sm table-hover mb-0" id="recent-table">
+          <thead>
+            <tr>
+              <th>Date/Heure</th>
+              <th>Type</th>
+              <th>Criticité</th>
+              <th>IP simulée</th>
+              <th>Confiance</th>
+            </tr>
+          </thead>
+          <tbody id="recent-tbody">
+            {% for e in recentes %}
+            <tr>
+              <td><small>{{ e.datetime }}</small></td>
+              <td><span class="badge attack-badge-{{ e.badge }}">{{ e.type_attaque }}</span></td>
+              <td><small>{{ e.criticite }}</small></td>
+              <td><code>{{ e.ip }}</code></td>
+              <td>
+                <div class="progress" style="height:8px;width:70px;">
+                  <div class="progress-bar bg-cyan" style="width:{{ e.confiance }}%"></div>
+                </div>
+                <small>{{ e.confiance }}%</small>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center text-muted">Aucune détection pour l'instant</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Simulate button ────────────────────────────────────────────────── -->
+<div class="text-center mb-3">
+  <button class="btn btn-cyber-primary btn-lg" onclick="simulerAttaque()">
+    <i class="bi bi-lightning-charge"></i> Simuler une attaque
+  </button>
+  <span id="simulate-status" class="ms-3 text-muted small"></span>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Données initiales pour le graphique
+  const initialComptage = {{ comptage | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

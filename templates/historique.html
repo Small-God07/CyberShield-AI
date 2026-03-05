@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Historique — CyberShield AI{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>📋 Historique des détections</h2>
+  <form method="POST" action="{{ url_for('vider_historique') }}"
+        onsubmit="return confirm('Vider tout l\'historique ?')">
+    <button type="submit" class="btn btn-outline-danger btn-sm">
+      <i class="bi bi-trash"></i> Vider l'historique
+    </button>
+  </form>
+</div>
+
+<!-- ── Filters ────────────────────────────────────────────────────────── -->
+<div class="mb-3 d-flex flex-wrap gap-2">
+  <small class="text-muted align-self-center">Filtrer :</small>
+  <button class="btn btn-sm btn-outline-secondary filter-btn active" data-filter="all">Tous</button>
+  <button class="btn btn-sm btn-outline-danger    filter-btn" data-filter="DDoS">DDoS</button>
+  <button class="btn btn-sm btn-outline-warning   filter-btn" data-filter="Intrusion">Intrusion</button>
+  <button class="btn btn-sm filter-btn btn-outline-purple" data-filter="Malware">Malware</button>
+  <button class="btn btn-sm filter-btn btn-outline-phishing" data-filter="Phishing">Phishing</button>
+  <button class="btn btn-sm btn-outline-primary   filter-btn" data-filter="SQL_Injection">SQL Injection</button>
+  <button class="btn btn-sm btn-outline-success   filter-btn" data-filter="Normal">Normal</button>
+</div>
+
+<!-- ── Table ──────────────────────────────────────────────────────────── -->
+<div class="cyber-card p-0">
+  <div class="table-responsive">
+    <table class="table table-dark table-hover mb-0" id="hist-table">
+      <thead>
+        <tr>
+          <th>Date / Heure</th>
+          <th>Type d'attaque</th>
+          <th>Criticité</th>
+          <th>IP simulée</th>
+          <th>Confiance</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in historique %}
+        <tr data-type="{{ e.type_attaque }}">
+          <td><small>{{ e.datetime }}</small></td>
+          <td><span class="badge attack-badge-{{ e.badge }}">{{ e.type_attaque }}</span></td>
+          <td>
+            {% if e.criticite == 'NORMAL' %}<span class="badge bg-success">NORMAL</span>
+            {% elif e.criticite == 'FAIBLE' %}<span class="badge bg-warning text-dark">FAIBLE</span>
+            {% elif e.criticite == 'MOYEN' %}<span class="badge bg-orange">MOYEN</span>
+            {% else %}<span class="badge bg-danger">CRITIQUE</span>{% endif %}
+          </td>
+          <td><code>{{ e.ip }}</code></td>
+          <td>
+            <div class="progress" style="height:6px;width:60px;display:inline-block;">
+              <div class="progress-bar bg-cyan" style="width:{{ e.confiance }}%"></div>
+            </div>
+            <small class="ms-1">{{ e.confiance }}%</small>
+          </td>
+          <td>
+            {% if e.statut == 'Résolu' %}
+              <span class="badge bg-success"><i class="bi bi-check-circle"></i> Résolu</span>
+            {% else %}
+              <span class="badge bg-secondary"><i class="bi bi-check2"></i> Normal</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">Aucune détection enregistrée</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<small class="text-muted d-block mt-2">{{ historique | length }} entrée{% if historique | length != 1 %}s{% endif %} — max 100</small>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    const filter = this.dataset.filter;
+    document.querySelectorAll('#hist-table tbody tr[data-type]').forEach(row => {
+      row.style.display = (filter === 'all' || row.dataset.type === filter) ? '' : 'none';
+    });
+  });
+});
+</script>
+{% endblock %}
