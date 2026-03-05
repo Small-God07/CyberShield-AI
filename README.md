@@ -25,6 +25,17 @@ trained on 4 150 simulated connections and achieves over 98 % accuracy.
 
 ---
 
+## 💾 Sauvegarde & Export
+
+| Fonctionnalité | Description |
+|---|---|
+| 🗄️ **SQLite** | Toutes les détections sont sauvegardées localement dans `cybershield.db` |
+| 📊 **Export CSV** | Téléchargez l'historique complet au format Excel via `/export/csv` |
+| 📄 **Export PDF** | Générez un rapport PDF professionnel via `/export/pdf` |
+| 🗑️ **Vider** | Réinitialisez l'historique depuis l'interface |
+
+---
+
 ## ✨ Fonctionnalités principales
 
 - 🖥️ **Dashboard temps réel** — statistiques globales et graphique en donut (mise à jour toutes les 5 s)
